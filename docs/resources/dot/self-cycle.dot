@@ -1,0 +1,22 @@
+digraph "graph" {
+  dpi="300.0";
+  rankdir=BT;
+
+  "a" [];
+  "a" -> "e" [label=""];
+
+  "b" [];
+  "b" -> "a" [label=""];
+
+  "c" [];
+  "c" -> "d" [label=""];
+
+  "d" [];
+  "d" -> "a" [label=""];
+
+  "e" [color="#ff0000"];
+  "e" -> "e" [color="#ff0000",label=""];
+
+
+  "LEGEND" [fillcolor="#ffffff",fontname="Verdana,Arial,Sans-Serif",label=<<table border="2" cellborder="1" cellspacing="0" id="LEGEND"><tr><td align="left">LEGEND</td></tr><tr><td align="left"><b>graph</b></td></tr><tr><td align="left">2019-11-14 17:22</td></tr></table>>,shape=plaintext,style=filled];
+}

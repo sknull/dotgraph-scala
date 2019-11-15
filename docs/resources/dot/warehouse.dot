@@ -1,0 +1,82 @@
+digraph "warehouse-graph" {
+  dpi="300.0";
+  rankdir=BT;
+
+  "a" [];
+  "a" -> "g" [label=""];
+
+  "b" [];
+  "b" -> "m" [label=""];
+
+  "c" [];
+  "c" -> "c" [label=""];
+  "c" -> "k" [label=""];
+  "c" -> "s" [label=""];
+
+  "d" [];
+  "d" -> "h" [label=""];
+
+  "e" [];
+  "e" -> "m" [label=""];
+
+  "f" [];
+  "f" -> "l" [label=""];
+  "f" -> "m" [label=""];
+  "f" -> "i" [label=""];
+
+  "g" [];
+  "g" -> "a" [label=""];
+  "g" -> "l" [label=""];
+
+  "h" [];
+  "h" -> "h" [label=""];
+  "h" -> "q" [label=""];
+  "h" -> "o" [label=""];
+  "h" -> "a" [label=""];
+  "h" -> "d" [label=""];
+
+  "i" [];
+  "i" -> "f" [label=""];
+  "i" -> "j" [label=""];
+
+  "j" [];
+  "j" -> "i" [label=""];
+
+  "k" [];
+  "k" -> "c" [label=""];
+
+  "l" [];
+  "l" -> "g" [label=""];
+
+  "m" [];
+  "m" -> "d" [label=""];
+  "m" -> "h" [label=""];
+
+  "n" [];
+  "n" -> "s" [label=""];
+  "n" -> "i" [label=""];
+
+  "o" [];
+  "o" -> "h" [label=""];
+
+  "p" [];
+  "p" -> "m" [label=""];
+
+  "q" [];
+  "q" -> "h" [label=""];
+
+  "r" [];
+  "r" -> "s" [label=""];
+  "r" -> "n" [label=""];
+
+  "s" [];
+  "s" -> "c" [label=""];
+  "s" -> "r" [label=""];
+  "s" -> "f" [label=""];
+
+  "t" [];
+  "t" -> "h" [label=""];
+
+
+  "LEGEND" [fillcolor="#ffffff",fontname="Verdana,Arial,Sans-Serif",label=<<table border="2" cellborder="1" cellspacing="0" id="LEGEND"><tr><td align="left">LEGEND</td></tr><tr><td align="left"><b>warehouse-graph</b></td></tr><tr><td align="left">2019-11-14 17:22</td></tr></table>>,shape=plaintext,style=filled];
+}
