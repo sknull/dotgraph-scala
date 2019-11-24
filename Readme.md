@@ -12,8 +12,7 @@
         1. [Nested Graphs](#315)
     1. [Maven DSL](#32)
 
-## History of the Project
-<a name="1"></a>
+## History of the Project<a name="1"></a>
 This Project started some years ago as I have been involved in a project to convert a legacy Ant based monolith with checked in
 third party libraries into a standard Maven project. As we had to make sure we do not change the original class path
 we came up with idea of analyzing dependencies in a graphic manner.
@@ -25,22 +24,18 @@ Dotgraph project for porting to Scala as this provides a lot topics which also a
 generics, inheritance, enumerations, recursion and a lot of patterns to work on.
 The result of a month of learning and coding is this repository.
 
-## Structure of the Project
-<a name="2"></a>
+## Structure of the Project<a name="2"></a>
 The project is split up in two parts (for now):
 * The dotgraph core which represents the DSL to build graphs with a fluent DSL
 * The first technical DSL which made sense to implement in the current context: Maven
   With the Maven DSL it is possible to analyze hierarchical Maven projects regarding dependencies, plugins and profiles.
   In this Scala variant the maven scheme is not implemented completely but it should be easy to extend if needed
   
-## Usage
-<a name="3"></a>
+## Usage<a name="3"></a>
 
-### Core DSL
-<a name="31"></a>
+### Core DSL<a name="31"></a>
 
-#### Creating a Simple Graph
-<a name="311"></a>
+#### Creating a Simple Graph<a name="311"></a>
 Here is a simple code snippet which demonstrates the basic usage.
 In this example we produce a PDF file with a resolution of 300 DPI.
 For supported output formats please have a look into the [dot documentation](https://graphviz.gitlab.io/_pages/doc/info/output.html)
@@ -56,8 +51,7 @@ For supported output formats please have a look into the [dot documentation](htt
       .output(dotExecutable, targetDirectory, "simple", "pdf", "300")
 ![Simple Graph](docs/resources/images/simple.jpg)
 
-#### Cycle Detection
-<a name="312"></a>
+#### Cycle Detection<a name="312"></a>
 One of the main features of this API is the capability to detect cycles as in this example:
     
     DotGraph("graph")
@@ -78,8 +72,7 @@ One of the main features of this API is the capability to detect cycles as in th
       .output(dotExecutable, targetDirectory, "cycle")
 ![Cycle detection](docs/resources/images/cycle.jpg)
 
-#### Calculating Routes and Transitive Edges
-<a name="313"></a>
+#### Calculating Routes and Transitive Edges<a name="313"></a>
 Another important feature is the calculation of routes within the graph along with transitive edges.
 This feature is shown in a bit more complex graph which also defines a template node with a rectangular shape instead of
 the default ellipse:
@@ -129,8 +122,7 @@ the default ellipse:
       .output(dotExecutable, targetDirectory, "routes")
 ![Routes and transitive edges](docs/resources/images/routes.jpg)
 
-#### Sub Graphs
-<a name="314"></a>
+#### Sub Graphs<a name="314"></a>
 Graphs may also be nested which is demonstrated by the following code snippet.
 Please note that sub graphs must have an id which starts with the word 'cluster'
 this is a restriction of the dot language.
@@ -207,8 +199,7 @@ this is a restriction of the dot language.
       .output(dotExecutable, targetDirectory, "subgraph")
 ![Sub Graphs](docs/resources/images/subgraph.jpg)
 
-#### Nested Graphs
-<a name="315"></a>
+#### Nested Graphs<a name="315"></a>
 It is also possible to nest graphs. Here the same rules for sub graphs apply regarding their naming as mentioned in the
 previous section.
 
@@ -247,8 +238,7 @@ previous section.
       .output(dotExecutable, targetDirectory, "nested")
 ![Nested Graphs](docs/resources/images/nested.jpg)
 
-### Maven DSL
-<a name="32"></a>
+### Maven DSL<a name="32"></a>
 Creating a fact sheet for a given Maven project is easy as:
 
     PomGraph(new File("../pom.xml")).output(targetDirectory, format = "jpg", dpi = "300")
