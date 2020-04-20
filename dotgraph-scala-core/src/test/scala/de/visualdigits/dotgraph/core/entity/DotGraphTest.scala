@@ -1,6 +1,7 @@
 package de.visualdigits.dotgraph.core.entity
 
 import java.io.File
+import java.nio.file.Paths
 
 import de.visualdigits.dotgraph.core.`type`._
 import org.junit.Assert._
@@ -11,7 +12,7 @@ import scala.collection.mutable
 class DotGraphTest {
 
   val dotExecutable = new File("/usr/local/bin/dot")
-  val targetDirectory: File = new File("/Users/knull/dotgraph/")
+  val targetDirectory: File = Paths.get(System.getProperty("user.home"),"dotgraph", "core").toFile
 
   @Test def testCRUD(): Unit = {
     val subgraph = DotGraph("cluster", graphType = GraphType.subgraph)
@@ -176,7 +177,7 @@ class DotGraphTest {
   @Test def testCycle(): Unit = {
     val graph = DotGraph("graph")
           .setCycleColors(DotColor("#ff7700"))
-          .setFactorTransitive(0.2)
+          .setFactorTransitive(0.2f)
           .setDetermineTransitiveEdges(true)
           .addNodeById("a")
           .addNodeById("b")

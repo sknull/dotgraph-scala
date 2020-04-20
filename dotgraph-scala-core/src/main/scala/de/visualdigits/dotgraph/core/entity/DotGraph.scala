@@ -45,7 +45,7 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
   val routes: mutable.Set[mutable.ListBuffer[DotNode]] = mutable.LinkedHashSet()
 
   /** All color categories for nodes within this graph. */
-  val categories: mutable.Map[String, DotColor] = mutable.Map()
+  val categories: mutable.Map[String, DotColor] = mutable.LinkedHashMap()
 
   /** Helper set to determine nodes already visited. */
   val visited: mutable.Set[DotNode] = mutable.Set()
@@ -62,7 +62,7 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
   /** The color used for nodes and edges in cycles. */
   var cycleColor: DotColor = DotColor.RED
 
-  var factorTransitive: Double = 0.3
+  var factorTransitive: Float = 0.3f
 
   // apply proper attributes for top level graphs.
   if (graphType != GraphType.subgraph) {
@@ -121,7 +121,7 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
    *                         when transitive.
    * @return
    */
-  def setFactorTransitive(factorTransitive: Double): DotGraph = {
+  def setFactorTransitive(factorTransitive: Float): DotGraph = {
     this.factorTransitive = factorTransitive
     this
   }
@@ -310,7 +310,11 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
         val keys = mutable.ListBuffer[String]()
         keys.addAll(categories.keySet)
         keys.sortWith(_.toLowerCase() > _.toLowerCase())
-        keys.foreach((key: String) => table.addRow(key, bgColor = categories(key)))
+        keys.foreach((key: String) => {
+          val bgColor = categories(key)
+          val fgColor = if (bgColor == DotColor.BLACK) DotColor.WHITE else DotColor.BLACK
+          table.addRow(key, fgColor = fgColor, bgColor = bgColor)
+        })
       }
     }
     legend
@@ -590,8 +594,10 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
     })
   }
 
-  def addEdgeById(fromId: String, toId: String, label: String = ""): DotGraph = {
-    addAndReturnEdgeById(fromId, toId, label)
+  def addEdgeById(fromId: String, toId: String, label: String = "", color: DotColor = DotColor.BLACK, arrowHead: Option[ArrowType] = None): DotGraph = {
+    val edge: Option[DotEdge] = addAndReturnEdgeById(fromId, toId, label)
+    edge.map(_.attributes.setColor(color))
+    arrowHead.foreach(ah => edge.foreach(_.attributes.setArrowhead(ah)))
     this
   }
 

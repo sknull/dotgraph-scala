@@ -13,24 +13,24 @@ import scala.collection.mutable
 /**
  * Represents a hierarchical Maven project.
  *
- * @param pomFile The top level pom file to consume.
+ * @param pomFile The top level node file to consume.
  * @param name  The top level name.
  */
 class PomGraph(val pomFile: File, name: String = "") extends DotGraph(name) {
 
-  val pomCache: mutable.Map[String, Pom] = mutable.Map()
+  val nodeCache: mutable.Map[String, Pom] = mutable.Map()
 
   if (name.isEmpty) {
     this.id = pomFile.getParentFile.getCanonicalFile.getName
   }
 
-  val pom = Pom(pomFile)
+  val node: Pom = Pom(pomFile)
   val pomNodes: mutable.LinkedHashSet[Pom] = {
     setCycleColors(new DotColor("#ff0000"))
       .setDetermineTransitiveEdges(true)
       .setCreateLegend(CreateLegend.FULL)
 
-    val pomNodes: mutable.LinkedHashSet[Pom] = pom.dfs()
+    val pomNodes: mutable.LinkedHashSet[Pom] = node.dfs()
 
     // add nodes
     pomNodes.foreach(pom => addNode(PomNode(this, pom.artifact.toString, pom)))
@@ -72,13 +72,13 @@ class PomGraph(val pomFile: File, name: String = "") extends DotGraph(name) {
   }
 
   private def determineExternalParents(pom: Pom, parentArtifact: Artifact): Unit = {
-    var parentPom = pomCache.getOrElse(parentArtifact.key, null)
+    var parentPom = nodeCache.getOrElse(parentArtifact.key, null)
     if (parentPom == null) {
-      val pomFile = Paths.get(System.getProperty("user.home"), ".m2", "repository", parentArtifact.groupId.replace('.', '/'), parentArtifact.artifactId, parentArtifact.version, parentArtifact.artifactId + "-" + parentArtifact.version + ".pom").toFile
+      val pomFile = Paths.get(System.getProperty("user.home"), ".m2", "repository", parentArtifact.groupId.replace('.', '/'), parentArtifact.artifactId, parentArtifact.version, parentArtifact.artifactId + "-" + parentArtifact.version + ".node").toFile
       if (pomFile.exists()) {
         parentPom = Pom(pomFile)
         parentPom.childPoms.addOne(pom)
-        pomCache.addOne(parentArtifact.key, parentPom)
+        nodeCache.addOne(parentArtifact.key, parentPom)
       }
     }
     if (parentPom != null) {
