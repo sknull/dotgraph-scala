@@ -203,12 +203,6 @@ class PomGraph(val pomFile: File, name: String = "") extends DotGraph(name) {
   }
 
   private def setMavenProperties(pom: Pom): Unit = {
-    val baseDir = pom.pomFile.getParentFile.getCanonicalFile
-    pom.properties.addOne("basedir", PropertyValue(baseDir.getPath))
-    pom.properties.addOne("project.basedir", PropertyValue(baseDir.getPath))
-    pom.properties.addOne("project.baseUri", PropertyValue(baseDir.toURI.toString))
-    pom.properties.addOne("maven.multiModuleProjectDirectory", PropertyValue(baseDir.getPath))
-
     pom.properties.addOne("project.packaging", PropertyValue(pom.packaging))
     pom.properties.addOne("project.groupId", PropertyValue(pom.artifact.groupId))
     pom.properties.addOne("project.artifactId", PropertyValue(pom.artifact.artifactId))
@@ -216,25 +210,33 @@ class PomGraph(val pomFile: File, name: String = "") extends DotGraph(name) {
     pom.properties.addOne("project.description", PropertyValue(pom.artifact.description))
     pom.properties.addOne("project.version", PropertyValue(pom.artifact.version))
 
-    var buildDirectory = if (pom.build.nonEmpty && pom.build.get.directory.nonEmpty) Paths.get(baseDir.getPath, pom.build.get.directory).toFile.getCanonicalPath else ""
-    buildDirectory = if (buildDirectory.isEmpty) Paths.get(baseDir.getPath, "target").toFile.getCanonicalPath else buildDirectory
-    pom.properties.addOne("project.build.directory", PropertyValue(buildDirectory))
+    val baseDir = pom.pomFile.map(_.getParentFile.getCanonicalFile)
+    baseDir.foreach(bd => {
+      pom.properties.addOne("basedir", PropertyValue(bd.getPath))
+      pom.properties.addOne("project.basedir", PropertyValue(bd.getPath))
+      pom.properties.addOne("project.baseUri", PropertyValue(bd.toURI.toString))
+      pom.properties.addOne("maven.multiModuleProjectDirectory", PropertyValue(bd.getPath))
 
-    var sourceDirectory = if (pom.build.nonEmpty && pom.build.get.sourceDirectory.nonEmpty) Paths.get(baseDir.getPath, pom.build.get.sourceDirectory).toFile.getCanonicalPath else ""
-    sourceDirectory = if (sourceDirectory.isEmpty) Paths.get(baseDir.getPath, "src", "main", "java").toFile.getCanonicalPath else sourceDirectory
-    pom.properties.addOne("project.build.sourceDirectory", PropertyValue(sourceDirectory))
+      var buildDirectory = if (pom.build.nonEmpty && pom.build.get.directory.nonEmpty) Paths.get(bd.getPath, pom.build.get.directory).toFile.getCanonicalPath else ""
+      buildDirectory = if (buildDirectory.isEmpty) Paths.get(bd.getPath, "target").toFile.getCanonicalPath else buildDirectory
+      pom.properties.addOne("project.build.directory", PropertyValue(buildDirectory))
 
-    var outputDirectory = if (pom.build.nonEmpty && pom.build.get.outputDirectory.nonEmpty) Paths.get(baseDir.getPath, pom.build.get.outputDirectory).toFile.getCanonicalPath else ""
-    outputDirectory = if (outputDirectory.isEmpty) Paths.get(buildDirectory, "classes").toFile.getCanonicalPath else outputDirectory
-    pom.properties.addOne("project.build.outputDirectory", PropertyValue(outputDirectory))
+      var sourceDirectory = if (pom.build.nonEmpty && pom.build.get.sourceDirectory.nonEmpty) Paths.get(bd.getPath, pom.build.get.sourceDirectory).toFile.getCanonicalPath else ""
+      sourceDirectory = if (sourceDirectory.isEmpty) Paths.get(bd.getPath, "src", "main", "java").toFile.getCanonicalPath else sourceDirectory
+      pom.properties.addOne("project.build.sourceDirectory", PropertyValue(sourceDirectory))
 
-    var testSourceDirectory = if (pom.build.nonEmpty && pom.build.get.testSourceDirectory.nonEmpty) Paths.get(baseDir.getPath, pom.build.get.testSourceDirectory).toFile.getCanonicalPath else ""
-    testSourceDirectory = if (testSourceDirectory.isEmpty) Paths.get(baseDir.getPath, "src", "test", "java").toFile.getCanonicalPath else testSourceDirectory
-    pom.properties.addOne("project.build.testSourceDirectory", PropertyValue(testSourceDirectory))
+      var outputDirectory = if (pom.build.nonEmpty && pom.build.get.outputDirectory.nonEmpty) Paths.get(bd.getPath, pom.build.get.outputDirectory).toFile.getCanonicalPath else ""
+      outputDirectory = if (outputDirectory.isEmpty) Paths.get(buildDirectory, "classes").toFile.getCanonicalPath else outputDirectory
+      pom.properties.addOne("project.build.outputDirectory", PropertyValue(outputDirectory))
 
-    var testOutputDirectory = if (pom.build.nonEmpty && pom.build.get.testOutputDirectory.nonEmpty) Paths.get(baseDir.getPath, pom.build.get.testOutputDirectory).toFile.getCanonicalPath else ""
-    testOutputDirectory = if (testOutputDirectory.isEmpty) Paths.get(buildDirectory, "test-classes").toFile.getCanonicalPath else testOutputDirectory
-    pom.properties.addOne("project.build.testOutputDirectory", PropertyValue(testOutputDirectory))
+      var testSourceDirectory = if (pom.build.nonEmpty && pom.build.get.testSourceDirectory.nonEmpty) Paths.get(bd.getPath, pom.build.get.testSourceDirectory).toFile.getCanonicalPath else ""
+      testSourceDirectory = if (testSourceDirectory.isEmpty) Paths.get(bd.getPath, "src", "test", "java").toFile.getCanonicalPath else testSourceDirectory
+      pom.properties.addOne("project.build.testSourceDirectory", PropertyValue(testSourceDirectory))
+
+      var testOutputDirectory = if (pom.build.nonEmpty && pom.build.get.testOutputDirectory.nonEmpty) Paths.get(bd.getPath, pom.build.get.testOutputDirectory).toFile.getCanonicalPath else ""
+      testOutputDirectory = if (testOutputDirectory.isEmpty) Paths.get(buildDirectory, "test-classes").toFile.getCanonicalPath else testOutputDirectory
+      pom.properties.addOne("project.build.testOutputDirectory", PropertyValue(testOutputDirectory))
+    })
   }
 
   private def refreshNodeKeys(): Unit = {
