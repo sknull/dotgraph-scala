@@ -1,18 +1,15 @@
-# Dotgraph Scala
+= Dotgraph Scala
+:doctype: book
+:description: Projekt Dokumentation für den Mediaboss
+:keywords: Inbound, APA, EQS, PRN, Media-Boss
+:icons: font
+:toc:
+:toc-title: Inhalt
+:toclevels: 10
+:graphvizdot: /usr/local/bin/dot
 
-## Table of Contents
-1. [History of the Project](#1)
-1. [Structure of the Project](#2)
-1. [Usage](#3)
-    1. [Core DSL](#31)
-        1. [Creating a Simple Graph](#311)
-        1. [Cycle Detection](#312)
-        1. [Calculating Routes and Transitive Edges](#313)
-        1. [Sub Graphs](#314)
-        1. [Nested Graphs](#315)
-    1. [Maven DSL](#32)
 
-## History of the Project<a name="1"></a>
+== History of the Project
 This Project started some years ago as I have been involved in a project to convert a legacy Ant based monolith with checked in
 third party libraries into a standard Maven project. As we had to make sure we do not change the original class path
 we came up with idea of analyzing dependencies in a graphic manner.
@@ -24,18 +21,19 @@ Dotgraph project for porting to Scala as this provides a lot topics which also a
 generics, inheritance, enumerations, recursion and a lot of patterns to work on.
 The result of a month of learning and coding is this repository.
 
-## Structure of the Project<a name="2"></a>
+== Structure of the Project
 The project is split up in two parts (for now):
-* The dotgraph core which represents the DSL to build graphs with a fluent DSL
-* The first technical DSL which made sense to implement in the current context: Maven
+
+- The dotgraph core which represents the DSL to build graphs with a fluent DSL
+- The first technical DSL which made sense to implement in the current context: Maven
   With the Maven DSL it is possible to analyze hierarchical Maven projects regarding dependencies, plugins and profiles.
   In this Scala variant the maven scheme is not implemented completely but it should be easy to extend if needed
   
-## Usage<a name="3"></a>
+== Usage
 
-### Core DSL<a name="31"></a>
+=== Core DSL
 
-#### Creating a Simple Graph<a name="311"></a>
+==== Creating a Simple Graph
 Here is a simple code snippet which demonstrates the basic usage.
 In this example we produce a PDF file with a resolution of 300 DPI.
 For supported output formats please have a look into the [dot documentation](https://graphviz.gitlab.io/_pages/doc/info/output.html)
@@ -49,9 +47,13 @@ For supported output formats please have a look into the [dot documentation](htt
       .addEdgeById("b", "a")
       .addEdgeById("c", "a")
       .output(dotExecutable, targetDirectory, "simple", "pdf", "300")
-![Simple Graph](docs/resources/images/simple.jpg)
 
-#### Cycle Detection<a name="312"></a>
+[graphviz]
+----
+include::docs/dot/simple.dot[]
+----
+
+==== Cycle Detection
 One of the main features of this API is the capability to detect cycles as in this example:
     
     DotGraph("graph")
@@ -70,9 +72,13 @@ One of the main features of this API is the capability to detect cycles as in th
       .addEdgeById("e", "b")
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "cycle")
-![Cycle detection](docs/resources/images/cycle.jpg)
 
-#### Calculating Routes and Transitive Edges<a name="313"></a>
+[graphviz]
+----
+include::docs/dot/cycle.dot[]
+----
+
+==== Calculating Routes and Transitive Edges
 Another important feature is the calculation of routes within the graph along with transitive edges.
 This feature is shown in a bit more complex graph which also defines a template node with a rectangular shape instead of
 the default ellipse:
@@ -120,9 +126,13 @@ the default ellipse:
       .addEdgeById("z", "y")
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "routes")
-![Routes and transitive edges](docs/resources/images/routes.jpg)
 
-#### Sub Graphs<a name="314"></a>
+[graphviz]
+----
+include::docs/dot/routes.dot[]
+----
+
+==== Sub Graphs
 Graphs may also be nested which is demonstrated by the following code snippet.
 Please note that sub graphs must have an id which starts with the word 'cluster'
 this is a restriction of the dot language.
@@ -197,9 +207,13 @@ this is a restriction of the dot language.
       .addEdgeById("e2", "A")
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "subgraph")
-![Sub Graphs](docs/resources/images/subgraph.jpg)
 
-#### Nested Graphs<a name="315"></a>
+[graphviz]
+----
+include::docs/dot/subgraph.dot[]
+----
+
+==== Nested Graphs
 It is also possible to nest graphs. Here the same rules for sub graphs apply regarding their naming as mentioned in the
 previous section.
 
@@ -236,45 +250,55 @@ previous section.
       .addEdgeById("c", "a")
       .addGraph(cluster2)
       .output(dotExecutable, targetDirectory, "nested")
-![Nested Graphs](docs/resources/images/nested.jpg)
 
-### Maven DSL<a name="32"></a>
+[graphviz]
+----
+include::docs/dot/nested.dot[]
+----
+
+=== Maven DSL
 Creating a fact sheet for a given Maven project is easy as:
 
     PomGraph(new File("../pom.xml")).output(targetDirectory, format = "jpg", dpi = "300")
 
 In this case we will produce a JPG image file with a resolution of 300 DPI.
-The fact sheet will contain information about
 
-* Dependency Management
-* Dependencies
-* Plugin Management
-* Plugins
-* Profile Executions
+The fact sheet will contain information about:
+
+- Dependency Management
+- Dependencies
+- Plugin Management
+- Plugins
+- Profile Executions
 
 All topics above will be derived from top to bottom according to the modules structure of the project where
 all placeholders are resolved from properties (some of the most important standard Maven properties are also calculated).
 Here is the list of supported predefined Maven properties:
 
 Project coordinates:
-* project.packaging - The packaging of the project
-* project.artifactId - The artifactId of the projects artifact
-* project.groupId - The groupId of the projects artifact
-* project.version - The version of the projects artifact
-* project.name - The name of the projects artifact
-* project.description - The description of the projects artifact
+
+- project.packaging - The packaging of the project
+- project.artifactId - The artifactId of the projects artifact
+- project.groupId - The groupId of the projects artifact
+- project.version - The version of the projects artifact
+- project.name - The name of the projects artifact
+- project.description - The description of the projects artifact
 
 Directories:
-* basedir - The directory where the pom.xml is stored
-* project.basedir - The directory where the pom.xml is stored
-* project.baseUri - The directory where the pom.xml is stored as URI
-* maven.multiModuleProjectDirectory - The directory where the top pom.xml is stored
-* project.build.directory - The 
-* project.build.sourceDirectory
-* project.build.outputDirectory
-* project.build.testSourceDirectory
-* project.build.testOutputDirectory
+
+- basedir - The directory where the pom.xml is stored
+- project.basedir - The directory where the pom.xml is stored
+- project.baseUri - The directory where the pom.xml is stored as URI
+- maven.multiModuleProjectDirectory - The directory where the top pom.xml is stored
+- project.build.directory - The 
+- project.build.sourceDirectory
+- project.build.outputDirectory
+- project.build.testSourceDirectory
+- project.build.testOutputDirectory
 
 For this project the sheet looks as follows: 
     
-![Dotgraph Scala Maven Project](docs/resources/images/dotgraph-scala.jpg)
+[graphviz]
+----
+include::docs/dot/dotgraph-scala.dot[]
+----
