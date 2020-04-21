@@ -13,7 +13,7 @@
 This Project started some years ago as I have been involved in a project to convert a legacy Ant based monolith with checked in
 third party libraries into a standard Maven project. As we had to make sure we do not change the original class path
 we came up with idea of analyzing dependencies in a graphic manner.
-For visualization we chose the dot meta language as described on [this website](https://graphviz.org/).
+For visualization we chose the dot meta language as described on https://graphviz.org/[this website].
 Over the years many flavours and variants of a Java DSL have been developed but never were published.
 Specialized parsers and DSLs for different stuff were created such as Maven, Spring, IntteliJ, Docker, Java and Database (Postgresql).
 For my current team at NA News Aktuell I had to learn the Scala language and to go beyond the standard toy like examples I have chosen the
@@ -36,7 +36,7 @@ The project is split up in two parts (for now):
 ==== Creating a Simple Graph
 Here is a simple code snippet which demonstrates the basic usage.
 In this example we produce a PDF file with a resolution of 300 DPI.
-For supported output formats please have a look into the [dot documentation](https://graphviz.gitlab.io/_pages/doc/info/output.html)
+For supported output formats please have a look into the https://graphviz.gitlab.io/_pages/doc/info/output.html[dot documentation]
 
     DotGraph("simple")
       .setDetermineTransitiveEdges(true)
