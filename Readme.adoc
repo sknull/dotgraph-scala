@@ -48,10 +48,7 @@ For supported output formats please have a look into the [dot documentation](htt
       .addEdgeById("c", "a")
       .output(dotExecutable, targetDirectory, "simple", "pdf", "300")
 
-[graphviz]
-----
-include::docs/dot/simple.dot[]
-----
+image::docs/jpg/simple.jpg[]
 
 ==== Cycle Detection
 One of the main features of this API is the capability to detect cycles as in this example:
@@ -73,10 +70,7 @@ One of the main features of this API is the capability to detect cycles as in th
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "cycle")
 
-[graphviz]
-----
-include::docs/dot/cycle.dot[]
-----
+image::docs/jpg/cycle.jpg[]
 
 ==== Calculating Routes and Transitive Edges
 Another important feature is the calculation of routes within the graph along with transitive edges.
@@ -127,10 +121,7 @@ the default ellipse:
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "routes")
 
-[graphviz]
-----
-include::docs/dot/routes.dot[]
-----
+image::docs/jpg/routes.jpg[]
 
 ==== Sub Graphs
 Graphs may also be nested which is demonstrated by the following code snippet.
@@ -208,10 +199,7 @@ this is a restriction of the dot language.
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "subgraph")
 
-[graphviz]
-----
-include::docs/dot/subgraph.dot[]
-----
+image::docs/jpg/subgraph.jpg[]
 
 ==== Nested Graphs
 It is also possible to nest graphs. Here the same rules for sub graphs apply regarding their naming as mentioned in the
@@ -251,10 +239,7 @@ previous section.
       .addGraph(cluster2)
       .output(dotExecutable, targetDirectory, "nested")
 
-[graphviz]
-----
-include::docs/dot/nested.dot[]
-----
+image::docs/jpg/nested.jpg[]
 
 === Maven DSL
 Creating a fact sheet for a given Maven project is easy as:
@@ -298,7 +283,4 @@ Directories:
 
 For this project the sheet looks as follows: 
     
-[graphviz]
-----
-include::docs/dot/dotgraph-scala.dot[]
-----
+image::docs/jpg/dotgraph-scala.jpg[]
