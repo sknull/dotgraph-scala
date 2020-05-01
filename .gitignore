@@ -1,2 +1,4 @@
 *.iml
 .idea/
+dotgraph-scala-core/.settings/
+.settings/
