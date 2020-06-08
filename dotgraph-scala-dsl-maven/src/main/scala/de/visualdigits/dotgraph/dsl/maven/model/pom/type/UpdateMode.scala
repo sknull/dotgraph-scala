@@ -1,4 +1,4 @@
-package de.visualdigits.dotgraph.dsl.maven.model.`type`
+package de.visualdigits.dotgraph.dsl.maven.model.pom.`type`
 
 import enumeratum._
 

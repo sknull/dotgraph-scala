@@ -1,4 +1,4 @@
-package de.visualdigits.dotgraph.dsl.maven.model
+package de.visualdigits.dotgraph.dsl.maven.model.common
 
 class PropertyValue(val value: String, var derived: Boolean = false) {
 

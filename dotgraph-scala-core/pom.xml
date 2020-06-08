@@ -5,13 +5,13 @@
 
   <artifactId>dotgraph-scala-core</artifactId>
   <name>dotgraph-scala-core</name>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <description>Dot API Scala Flavour</description>
 
   <parent>
     <groupId>de.visualdigits</groupId>
     <artifactId>dotgraph-scala</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

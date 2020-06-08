@@ -1,14 +1,19 @@
 package de.visualdigits.dotgraph.dsl.maven.dotgraph
 
+import java.nio.file.Paths
+
 import de.visualdigits.dotgraph.core.`type`.html.Align
 import de.visualdigits.dotgraph.core.entity.html.{DotRow, DotTable}
 import de.visualdigits.dotgraph.core.entity.{DotColor, DotEdge, DotGraph, DotNode}
-import de.visualdigits.dotgraph.dsl.maven.model._
-import de.visualdigits.dotgraph.dsl.maven.model.`type`.UpdateMode
+import de.visualdigits.dotgraph.dsl.maven.model.common.PropertyValue
+import de.visualdigits.dotgraph.dsl.maven.model.pom.{Build, Pom, Profile, Resource}
+import de.visualdigits.dotgraph.dsl.maven.model.pom.`type`.UpdateMode
+import de.visualdigits.dotgraph.dsl.maven.model.pom.artifact.Artifact
+import de.visualdigits.dotgraph.dsl.maven.model.pom.repository.Repository
 
 import scala.collection.mutable
 
-class PomNode(graph: PomGraph, val name: String, val pom: Pom, val isExternal: Boolean = false) extends DotNode(graph, name) {
+class PomNode(graph: PomGraph, var name: String, val pom: Pom, m2RepoDirectory: String, val isExternal: Boolean = false) extends DotNode(graph, name) {
 
   val table: DotTable = {
     val table: DotTable = DotTable().attributes
@@ -23,18 +28,170 @@ class PomNode(graph: PomGraph, val name: String, val pom: Pom, val isExternal: B
     table
   }
 
+  pom.pomNode = Some(this)
+
+  updateCoordinatesFromHierarchy()
+  id = pom.artifact.key
+  name = id
+
+  def resolveDependencyPoms(graph: PomGraph, m2RepoDirectory: String): Seq[PomNode] = {
+    addNode(graph, this)
+    val addedChilds = mutable.ListBuffer[PomNode]()
+    pom.dependencies.values
+      .foreach(dep => {
+        dep.resolveProperties(pom.consolidatedProperties.toMap)
+        val key = dep.key
+        val p = dep.loadPomFromLocalRepo(m2RepoDirectory)
+        p.map((pom: Pom) => PomNode(graph, key, pom, m2RepoDirectory))
+          .foreach(pn => {
+            pn.resolveDependencyPoms(graph, m2RepoDirectory)
+            addNode(graph, pn)
+            graph.addEdgeById(id, pn.id, color = DotColor.GREEN_DARK)
+            addedChilds.addOne(pn)
+          })
+      })
+    addedChilds.toSeq
+  }
+
+  private def addNode(graph: PomGraph, node: PomNode): Unit = {
+    if (node.pom.artifact.groupId.startsWith("de.newsaktuell")) {
+//println("## NODE: "+node.id)
+      graph.addAndReturnNode(node)
+    }
+  }
+
+  def updateCoordinatesFromHierarchy(): Unit = {
+    val properties = pom.consolidatedProperties.toMap
+
+    pom.parent.foreach(pom.artifact.update(_, UpdateMode.none))
+
+    pom.dependencyManagement.values.foreach(dm => {
+      dm.resolveProperties(properties)
+      pom.dependencies.get(dm.key).foreach(dep => {
+        dep.update(dm, UpdateMode.management)
+      })
+    })
+    refreshKeys(pom.dependencyManagement)
+
+    pom.dependencies.values.foreach(d => {
+      d.resolveProperties(properties)
+    })
+    refreshKeys(pom.dependencies)
+
+    pom.build.foreach(build => {
+      build.pluginManagement.values.foreach(pm => {
+        pm.resolveProperties(properties)
+        build.plugins.get(pm.key).foreach(p => {
+          p.update(pm, UpdateMode.management)
+        })
+      })
+      refreshKeys(build.pluginManagement)
+      build.plugins.values.foreach(p => {
+        p.resolveProperties(properties)
+      })
+      refreshKeys(build.plugins)
+    })
+
+    pom.childPoms.foreach(child => {
+      child.artifact.update(pom.artifact, UpdateMode.none)
+
+      // derive properties
+      // only override values which either do not exist in the poms properties or are empty
+      pom.properties.foreach(elem => {
+        val value = child.properties.get(elem._1)
+        if (value.isEmpty || value.get.isEmpty) {
+          val p = elem._2.clone()
+          p.derived = true
+          child.properties.addOne(elem._1, p)
+        }
+      })
+
+      // process dependency management node (if any)
+      child.dependencyManagement.values.foreach(_.resolveProperties(properties))
+      refreshKeys(child.dependencyManagement)
+
+      // process dependencies node (if any)
+      child.dependencies.values.foreach(d => d.resolveProperties(properties))
+      refreshKeys(child.dependencies)
+
+      // derive dependency management
+      pom.dependencyManagement.foreach(elem => {
+        val dep = child.dependencyManagement.get(elem._2.key)
+        if (dep.nonEmpty) dep.get.update(elem._2, UpdateMode.resolved)
+        else {
+          val dep = elem._2.clone()
+          dep.derived = true
+          child.dependencyManagement.addOne(elem._1, dep)
+        }
+      })
+
+      // resolve dependencies from management
+      child.dependencyManagement.values.foreach(d => {
+        child.dependencies.get(d.key).foreach(dep => {
+          dep.update(d, UpdateMode.management)
+        })
+      })
+
+      // process build node (if any)
+      pom.build.foreach(pb => {
+        child.build.foreach(cb => {
+          // process plugin management node (if any)
+          cb.pluginManagement.values.foreach(_.resolveProperties(properties))
+          refreshKeys(cb.pluginManagement)
+
+          // process plugins node (if any)
+          cb.plugins.values.foreach(_.resolveProperties(properties))
+          refreshKeys(cb.plugins)
+
+          // derive plugin management
+          pb.pluginManagement.foreach(pe => {
+            val p = cb.pluginManagement.get(pe._2.key)
+            if (p.nonEmpty) p.get.update(pe._2, UpdateMode.resolved)
+            else {
+              val p = pe._2.clone()
+              p.derived = true
+              cb.pluginManagement.addOne(pe._1, p)
+            }
+          })
+
+          // resolve plugins from management
+          cb.pluginManagement.values.foreach(d => {
+            cb.plugins.get(d.key).foreach(p => {
+              p.update(d, UpdateMode.management)
+            })
+          })
+        })
+      })
+    })
+  }
+
+  /**
+   * Recalculates the keys of the given dependencies by re assigning the values to their current keys.
+   *
+   * @param dependencies The dependencies.
+   * @tparam T
+   */
+  def refreshKeys[T <: Artifact](dependencies: mutable.Map[String, T]): Unit = {
+    val artifacts: mutable.Map[String, T] = mutable.Map()
+    dependencies.values.foreach(dm => {
+      artifacts.addOne(dm.key, dm)
+    })
+    dependencies.clear()
+    dependencies.addAll(artifacts.asInstanceOf[mutable.Map[String, T]])
+    artifacts.clear()
+  }
+
   def showAttributes(): Unit = {
-    table.addRow("<b>%s [%s] =&gt; %s</b>".format(pom.artifact.resolveProperties().toString,
-      pom.packaging,
-      pom.parent.getOrElse("")),
-      if (isExternal) DotColor.WHITE else DotColor.DEFAULT,
-      if (isExternal) DotColor.BLUE else DotColor.BLUE_LIGHT,
+    val title = "<b>%s</b>".format(pom.artifact.resolveProperties(pom.consolidatedProperties.toMap).toString)
+    table.addRow(title,
+      DotColor.DEFAULT,
+      if (pom.artifact.groupId.startsWith("de.newsaktuell")) DotColor.YELLOW else DotColor.YELLOW_LIGHT,
       2, align = Align.center)
-    showOrganization()
-    showScm()
-    showRepositories("REPOSITORIES", pom.repositories)
-    showRepositories("DISTRIBUTION MANAGEMENT", pom.distributionManagement)
-    showArtifacts()
+//    showOrganization()
+//    showScm()
+//    showRepositories("REPOSITORIES", pom.repositories)
+//    showRepositories("DISTRIBUTION MANAGEMENT", pom.distributionManagement)
+//    showArtifacts()
   }
 
   private def showOrganization(): Unit = {
@@ -162,7 +319,7 @@ class PomNode(graph: PomGraph, val name: String, val pom: Pom, val isExternal: B
     if (dependencies.nonEmpty) {
       rows.addOne(DotRow(label, colSpan = 2, align = Align.center))
       dependencies.values.filter(!_.derived).foreach(d => {
-        d.resolveProperties()
+        d.resolveProperties(pom.consolidatedProperties.toMap)
         val color = d.updateMode match {
             case UpdateMode.none => if (d.version.isEmpty) DotColor.RED_LIGHT else if (d.version.contains("$")) DotColor.RED else DotColor.GREEN_LIGHT
             case UpdateMode.`resolved` => DotColor.YELLOW
@@ -180,5 +337,5 @@ class PomNode(graph: PomGraph, val name: String, val pom: Pom, val isExternal: B
 }
 
 object PomNode {
-  def apply(graph: PomGraph, name: String, pom: Pom, isExternal: Boolean = false) = new PomNode(graph, name, pom, isExternal)
+  def apply(graph: PomGraph, name: String, pom: Pom, m2RepoDirectory: String, isExternal: Boolean = false) = new PomNode(graph, name, pom, m2RepoDirectory, isExternal)
 }

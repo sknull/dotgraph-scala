@@ -158,6 +158,9 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
       if (node.isRoot) roots.add(node)
       if (node.isLeaf) leafs.add(node)
     })
+    if (roots.isEmpty && nodes.size == 1) {
+      roots.add(nodes.values.head)
+    }
   }
 
   /**
@@ -450,6 +453,11 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
    */
   def addNode(node: DotNode): DotGraph = {
     addAndReturnNode(node)
+    this
+  }
+
+  def addAllNodes(nodes: Seq[DotNode]): DotGraph = {
+    nodes.foreach(addAndReturnNode)
     this
   }
 

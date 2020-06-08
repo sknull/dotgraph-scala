@@ -13,13 +13,17 @@
 This Project started some years ago as I have been involved in a project to convert a legacy Ant based monolith with checked in
 third party libraries into a standard Maven project. As we had to make sure we do not change the original class path
 we came up with idea of analyzing dependencies in a graphic manner.
+
 For visualization we chose the dot meta language as described on https://graphviz.org/[this website].
 Over the years many flavours and variants of a Java DSL have been developed but never were published.
 Specialized parsers and DSLs for different stuff were created such as Maven, Spring, IntteliJ, Docker, Java and Database (Postgresql).
+
 For my current team at NA News Aktuell I had to learn the Scala language and to go beyond the standard toy like examples I have chosen the
 Dotgraph project for porting to Scala as this provides a lot topics which also are part of every day life projects i.e.
 generics, inheritance, enumerations, recursion and a lot of patterns to work on.
 The result of a month of learning and coding is this repository.
+Currently we use the tool to generate graphs from a complex workflow engine which is used within our core systems.
+Those graphs are a helping aid for refactorings and planning new features.
 
 == Structure of the Project
 The project is split up in two parts (for now):
@@ -39,7 +43,6 @@ In this example we produce a PDF file with a resolution of 300 DPI.
 For supported output formats please have a look into the https://graphviz.gitlab.io/_pages/doc/info/output.html[dot documentation]
 
     DotGraph("simple")
-      .setDetermineTransitiveEdges(true)
       .addNodeById("a")
       .addNodeById("b")
       .addNodeById("c")
@@ -242,6 +245,9 @@ previous section.
 image::docs/jpg/nested.jpg[]
 
 === Maven DSL
+Currently the only DSL example is the Maven DSL which may be used to analyze complex
+multimodule projects.
+
 Creating a fact sheet for a given Maven project is easy as:
 
     PomGraph(new File("../pom.xml")).output(targetDirectory, format = "jpg", dpi = "300")
