@@ -32,6 +32,10 @@ class DotTable(id: String = "", row: Any = null, fgColor: DotColor = DotColor.DE
     s
   }
 
+  def clearRows(): Unit = {
+    rows.clear()
+  }
+
   def addRow(row: Any = null, fgColor: DotColor = DotColor.DEFAULT, bgColor: DotColor = DotColor.DEFAULT, colSpan: Int = 1, align: Align = Align.left): DotTable = {
     this.rows.addAll(createRow(row, fgColor, bgColor, colSpan, align))
     this

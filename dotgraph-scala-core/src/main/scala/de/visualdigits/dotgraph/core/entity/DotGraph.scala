@@ -465,12 +465,13 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
     val id = node.id
     val _n = getNodeById(id)
     var n: DotNode = null
-    if (_n.isDefined) n = _n.get
-    else {
+    if (_n.isEmpty) {
       n = node
       node.graph = this
       nodes.put(id, node)
       if (id.isEmpty) templateNodes.add(node)
+    } else {
+      n = _n.get
     }
     n
   }
@@ -490,12 +491,13 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
    * @return Option[DotNode]
    */
   def removeNodeById(id: String, doRemoveEdges: Boolean = true): Option[DotNode] = {
-    val _node = nodes.remove(id)
+    val _node = nodes.get(id)
     if (_node.isDefined) {
       val node = _node.get
-      if (doRemoveEdges) node.edges.foreach(edge => removeEdges(edge.from, edge.to))
+      if (doRemoveEdges) node.edges.clear()
       roots.remove(node)
       leafs.remove(node)
+      nodes.remove(node.id)
     }
     _node
   }
@@ -583,7 +585,9 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
   }
 
   def removeEdges(from: DotNode, to: DotNode): Unit = {
-   getEdges(from, to).foreach(edge => {
+    val edges = getEdges(from, to)
+    edges
+      .foreach(edge => {
       from.removeEdges(edge.to)
       to.removeReferences(edge.from)
     })
@@ -640,7 +644,9 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
    * @return Set<T>
    */
   def getGraphEdges: Set[DotEdge] = {
-    nodes.values.flatMap(_.edges).toSet
+    val values: Seq[DotNode] = nodes.values.toSeq
+    val edges: Seq[mutable.Set[DotEdge]] = values.map(_.edges)
+    edges.flatMap(_.toSet).toSet
   }
 
   /**
@@ -665,7 +671,9 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
   }
 
   def getEdges(from: DotNode, to: DotNode): Set[DotEdge] = {
-    getGraphEdges.filter(it => from == it.from && to == it.to)
+    val edges = getGraphEdges
+    val filteredEdges = edges.filter(e => e.from.id == from.id && e.to.id == to.id)
+    filteredEdges
   }
 
   /**

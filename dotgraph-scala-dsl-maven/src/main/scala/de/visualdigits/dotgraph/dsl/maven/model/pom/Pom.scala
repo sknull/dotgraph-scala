@@ -155,7 +155,7 @@ class Pom(val root: Node, m2RepoDirectory: String, val pomFile: Option[File], va
 }
 
 object Pom {
-  def apply(pomFile: File, m2RepoDirectory: String, parentPom: Option[Pom], pomNode: Option[PomNode] = None) = new Pom(XML.loadFile(pomFile), m2RepoDirectory, Some(pomFile), parentPom, pomNode)
+  def apply(pomFile: File, m2RepoDirectory: String, parentPom: Option[Pom] = None, pomNode: Option[PomNode] = None) = new Pom(XML.loadFile(pomFile), m2RepoDirectory, Some(pomFile), parentPom, pomNode)
 
   def apply(pom: String, m2RepoDirectory: String, pomNode: Option[PomNode]) = new Pom(XML.loadString(pom), m2RepoDirectory, None, None, pomNode)
 

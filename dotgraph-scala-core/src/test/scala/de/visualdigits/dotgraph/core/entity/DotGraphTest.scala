@@ -14,6 +14,21 @@ class DotGraphTest {
   val dotExecutable = new File("/usr/local/bin/dot")
   val targetDirectory: File = Paths.get(System.getProperty("user.home"),"dotgraph", "core").toFile
 
+  @Test def testRemove(): Unit = {
+
+    val graph = DotGraph("graph")
+      .setDetermineTransitiveEdges(true)
+      .addNodeById("a")
+      .addNodeById("b")
+      .addNodeById("c")
+      .addNodeById("d")
+      .addEdgeById("b", "a")
+      .addEdgeById("b", "c")
+      .addEdgeById("b", "d")
+    graph.removeNodeById("b")
+    println(graph)
+  }
+
   @Test def testCRUD(): Unit = {
     val subgraph = DotGraph("cluster", graphType = GraphType.subgraph)
       .setCreateLegend(CreateLegend.NONE)

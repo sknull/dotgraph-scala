@@ -16,7 +16,14 @@ import scala.collection.mutable
  * @param pomFile The top level node file to consume.
  * @param name  The top level name.
  */
-class PomGraph(val pomFile: File, name: String = "", m2RepoDirectory: String) extends DotGraph(name) {
+class PomGraph(
+                val pomFile: File,
+                name: String = "",
+                m2RepoDirectory: String = "",
+                filterPackages: Seq[String] = Seq(),
+                rootPackages: Seq[String] = Seq(),
+                analyzeDependencies: Boolean = false
+              ) extends DotGraph(name) {
 
   val nodeCache: mutable.Map[String, Pom] = mutable.Map()
 
@@ -35,9 +42,9 @@ class PomGraph(val pomFile: File, name: String = "", m2RepoDirectory: String) ex
     // add nodes
     pomNodes
         .map(pom => {
-          PomNode(this, pom.artifact.key, pom, m2RepoDirectory)
+          PomNode(this, pom.artifact.key, pom, m2RepoDirectory, bgColor = DotColor.YELLOW_LIGHT, analyzeDependencies = analyzeDependencies)
         }).foreach(pn => {
-          pn.resolveDependencyPoms(this, m2RepoDirectory)
+          pn.resolveDependencyPoms(this, m2RepoDirectory, filterPackages)
         })
 
     // add edges
@@ -53,12 +60,23 @@ class PomGraph(val pomFile: File, name: String = "", m2RepoDirectory: String) ex
       })
     })
 
+    nodes.values.map(_.asInstanceOf[PomNode])
+      .filter(n => rootPackages.isEmpty || rootPackages.exists(n.pom.artifact.groupId.startsWith(_)))
+      .foreach(n => {
+        n.bgColor = DotColor.YELLOW
+        n.showAttributes()
+      })
+
     determineGraphRoutes
-    updateArtifactCoordinates()
-    refreshNodeKeys()
-    markParentEdges(pomNodes)
+//    markParentEdges(pomNodes)
 
     pomNodes
+  }
+
+  override def removeNodeById(id: String, doRemoveEdges: Boolean = true): Option[DotNode] = {
+    val removedNode = super.removeNodeById(id, doRemoveEdges)
+    removedNode.foreach(r => pomNodes.remove(r.asInstanceOf[PomNode].pom))
+    removedNode
   }
 
   def getAllDependencies: Set[Artifact] = {
@@ -97,32 +115,22 @@ class PomGraph(val pomFile: File, name: String = "", m2RepoDirectory: String) ex
     }
     if (parentPom != null) {
       val name = parentPom.artifact.toString
-      addNode(PomNode(this, name, parentPom, m2RepoDirectory, isExternal = true))
+      addNode(PomNode(this, name, parentPom, m2RepoDirectory, isExternal = true, analyzeDependencies = analyzeDependencies))
       addEdgeById(pom.artifact.toString, name)
       parentPom.parent.foreach(parent => {
         determineExternalParents(parentPom, parent)
       })
     }
   }
-
-  private def updateArtifactCoordinates(): Unit = {
-    dfsSet.toSeq.reverse.foreach(dotNode =>
-      dotNode.asInstanceOf[PomNode].updateCoordinatesFromHierarchy())
-
-    // finally generate the dot tables
-    dfsSet.foreach(_.asInstanceOf[PomNode].showAttributes())
-  }
-
-  private def refreshNodeKeys(): Unit = {
-    val nodesTemp: mutable.Map[String, DotNode] = mutable.TreeMap()
-    nodes.values.foreach(node => {
-      nodesTemp.addOne(node.asInstanceOf[PomNode].pom.artifact.toString, node)
-    })
-    nodes.clear()
-    nodes.addAll(nodesTemp)
-  }
 }
 
 object PomGraph {
-  def apply(pomFile: File, name: String = "", m2RepoDirectory: String) = new PomGraph(pomFile, name, m2RepoDirectory)
+  def apply(
+             pomFile: File,
+             name: String = "",
+             m2RepoDirectory: String = "",
+             filterPackages: Seq[String] = Seq(),
+             rootPackages: Seq[String] = Seq(),
+             analyzeDependencies: Boolean = false
+           ) = new PomGraph(pomFile, name, m2RepoDirectory, filterPackages, rootPackages, analyzeDependencies)
 }

@@ -1,19 +1,23 @@
 package de.visualdigits.dotgraph.dsl.maven.dotgraph
 
-import java.nio.file.Paths
-
 import de.visualdigits.dotgraph.core.`type`.html.Align
 import de.visualdigits.dotgraph.core.entity.html.{DotRow, DotTable}
 import de.visualdigits.dotgraph.core.entity.{DotColor, DotEdge, DotGraph, DotNode}
-import de.visualdigits.dotgraph.dsl.maven.model.common.PropertyValue
-import de.visualdigits.dotgraph.dsl.maven.model.pom.{Build, Pom, Profile, Resource}
 import de.visualdigits.dotgraph.dsl.maven.model.pom.`type`.UpdateMode
 import de.visualdigits.dotgraph.dsl.maven.model.pom.artifact.Artifact
 import de.visualdigits.dotgraph.dsl.maven.model.pom.repository.Repository
+import de.visualdigits.dotgraph.dsl.maven.model.pom.{Build, Pom, Profile, Resource}
 
 import scala.collection.mutable
 
-class PomNode(graph: PomGraph, var name: String, val pom: Pom, m2RepoDirectory: String, val isExternal: Boolean = false) extends DotNode(graph, name) {
+class PomNode(
+               graph: PomGraph,
+               var name: String,
+               val pom: Pom, m2RepoDirectory: String,
+               val isExternal: Boolean = false,
+               var bgColor: DotColor = DotColor.DEFAULT,
+               analyzeDependencies: Boolean = false
+             ) extends DotNode(graph, name) {
 
   val table: DotTable = {
     val table: DotTable = DotTable().attributes
@@ -31,33 +35,38 @@ class PomNode(graph: PomGraph, var name: String, val pom: Pom, m2RepoDirectory: 
   pom.pomNode = Some(this)
 
   updateCoordinatesFromHierarchy()
+  showAttributes()
   id = pom.artifact.key
   name = id
 
-  def resolveDependencyPoms(graph: PomGraph, m2RepoDirectory: String): Seq[PomNode] = {
-    addNode(graph, this)
+  def resolveDependencyPoms(graph: PomGraph, m2RepoDirectory: String, filterPackages: Seq[String] = Seq()): Seq[PomNode] = {
+    addNode(graph, this, filterPackages)
     val addedChilds = mutable.ListBuffer[PomNode]()
     pom.dependencies.values
       .foreach(dep => {
         dep.resolveProperties(pom.consolidatedProperties.toMap)
-        val key = dep.key
-        val p = dep.loadPomFromLocalRepo(m2RepoDirectory)
-        p.map((pom: Pom) => PomNode(graph, key, pom, m2RepoDirectory))
-          .foreach(pn => {
-            pn.resolveDependencyPoms(graph, m2RepoDirectory)
-            addNode(graph, pn)
-            graph.addEdgeById(id, pn.id, color = DotColor.GREEN_DARK)
-            addedChilds.addOne(pn)
-          })
+        if (analyzeDependencies) {
+          val key = dep.key
+          val p = dep.loadPomFromLocalRepo(m2RepoDirectory)
+          p.map((pom: Pom) =>
+            PomNode(graph, key, pom, m2RepoDirectory, bgColor = DotColor.YELLOW_LIGHT, analyzeDependencies = analyzeDependencies))
+            .foreach(pn => {
+              pn.resolveDependencyPoms(graph, m2RepoDirectory, filterPackages)
+              addNode(graph, pn, filterPackages)
+              graph.addEdgeById(id, pn.id, color = DotColor.GREEN_DARK)
+              addedChilds.addOne(pn)
+            })
+        }
       })
     addedChilds.toSeq
   }
 
-  private def addNode(graph: PomGraph, node: PomNode): Unit = {
-    if (node.pom.artifact.groupId.startsWith("de.newsaktuell")) {
-//println("## NODE: "+node.id)
-      graph.addAndReturnNode(node)
+  private def addNode(graph: PomGraph, node: PomNode, filterPackages: Seq[String]): Option[DotNode] = {
+    var graphNode = graph.getNodeById(node.id)
+    if (graphNode.isEmpty && (filterPackages.isEmpty || filterPackages.exists(node.pom.artifact.groupId.startsWith(_)))) {
+      graphNode = Some(graph.addAndReturnNode(node))
     }
+    graphNode
   }
 
   def updateCoordinatesFromHierarchy(): Unit = {
@@ -183,9 +192,8 @@ class PomNode(graph: PomGraph, var name: String, val pom: Pom, m2RepoDirectory: 
 
   def showAttributes(): Unit = {
     val title = "<b>%s</b>".format(pom.artifact.resolveProperties(pom.consolidatedProperties.toMap).toString)
-    table.addRow(title,
-      DotColor.DEFAULT,
-      if (pom.artifact.groupId.startsWith("de.newsaktuell")) DotColor.YELLOW else DotColor.YELLOW_LIGHT,
+    table.clearRows()
+    table.addRow(title, DotColor.DEFAULT, bgColor,
       2, align = Align.center)
 //    showOrganization()
 //    showScm()
@@ -337,5 +345,13 @@ class PomNode(graph: PomGraph, var name: String, val pom: Pom, m2RepoDirectory: 
 }
 
 object PomNode {
-  def apply(graph: PomGraph, name: String, pom: Pom, m2RepoDirectory: String, isExternal: Boolean = false) = new PomNode(graph, name, pom, m2RepoDirectory, isExternal)
+  def apply(
+             graph: PomGraph,
+             name: String,
+             pom: Pom,
+             m2RepoDirectory: String,
+             isExternal: Boolean = false,
+             bgColor: DotColor = DotColor.DEFAULT,
+             analyzeDependencies: Boolean = false
+           ) = new PomNode(graph, name, pom, m2RepoDirectory, isExternal, bgColor, analyzeDependencies)
 }
