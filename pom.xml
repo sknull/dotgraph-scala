@@ -23,6 +23,7 @@
   <modules>
   	<module>dotgraph-scala-core</module>
   	<module>dotgraph-scala-dsl-maven</module>
+  	<module>dotgraph-scala-dsl-sbt</module>
   </modules>
 
   <dependencyManagement>
@@ -32,6 +33,16 @@
         <groupId>org.scala-lang.modules</groupId>
         <artifactId>scala-xml_${scala-version}</artifactId>
         <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.twitter</groupId>
+        <artifactId>util-eval_2.12</artifactId>
+        <version>6.43.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>2.13.4</version>
       </dependency>
       <dependency>
         <groupId>com.beachape</groupId>

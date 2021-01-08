@@ -16,7 +16,7 @@ class DotTable(id: String = "", row: Any = null, fgColor: DotColor = DotColor.DE
   if (!id.isEmpty) this.attributes.setId(id)
 
   /** The list of rows. */
-  private val rows = mutable.ListBuffer[DotRow]()
+  val rows = mutable.ListBuffer[DotRow]()
   addRow(row, fgColor, bgColor, colSpan, align)
 
   /** The explicit title row */

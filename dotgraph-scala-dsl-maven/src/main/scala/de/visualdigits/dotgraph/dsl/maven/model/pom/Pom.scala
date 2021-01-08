@@ -13,7 +13,13 @@ import scala.collection.mutable
 import scala.xml.{Node, XML}
 
 @JsonIgnoreProperties(Array("root", "parentPom", "childPoms", "pomFile"))
-class Pom(val root: Node, m2RepoDirectory: String, val pomFile: Option[File], var parentPom: Option[Pom] = Option.empty, var pomNode: Option[PomNode]) extends MavenObject(root, null) {
+class Pom(
+           val root: Node,
+           m2RepoDirectory: String,
+           val pomFile: Option[File],
+           var parentPom: Option[Pom] = Option.empty,
+           var pomNode: Option[PomNode]
+         ) extends MavenObject(root, null) {
 
   val childPoms: mutable.Set[Pom] = {
     parentPom.foreach(_.childPoms.addOne(this))

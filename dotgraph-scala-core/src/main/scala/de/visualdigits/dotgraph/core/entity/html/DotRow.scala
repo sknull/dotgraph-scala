@@ -11,7 +11,7 @@ import scala.collection.mutable
 class DotRow(cell: Any = null, fgColor: DotColor = DotColor.DEFAULT, bgColor: DotColor = DotColor.DEFAULT, colSpan: Int = 1, align: Align = Align.left) extends mutable.Iterable[DotCell] {
 
   /** The list of cells. */
-  private val cells = mutable.ListBuffer[DotCell]()
+  val cells = mutable.ListBuffer[DotCell]()
   addCell(cell, fgColor, bgColor, colSpan, align)
 
   override def toString: String = {

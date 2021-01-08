@@ -8,7 +8,6 @@ import de.visualdigits.dotgraph.dsl.maven.model.metadata.MetaData
 import de.visualdigits.dotgraph.dsl.maven.model.pom.Pom
 import de.visualdigits.dotgraph.dsl.maven.model.pom.`type`.UpdateMode
 
-import scala.collection.mutable
 import scala.xml.Node
 
 @JsonIgnoreProperties(Array("node", "pom"))

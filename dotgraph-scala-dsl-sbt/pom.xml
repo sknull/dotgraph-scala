@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
 
-  <artifactId>dotgraph-scala-dsl-maven</artifactId>
-  <name>dotgraph-scala-dsl-maven</name>
+  <artifactId>dotgraph-scala-dsl-sbt</artifactId>
+  <name>dotgraph-scala-dsl-sbt</name>
   <version>1.0.1-SNAPSHOT</version>
-  <description>Dot API Scala Flavour - Maven DSL</description>
+  <description>Dot API Scala Flavour - Maven SBT</description>
 
   <parent>
     <groupId>de.visualdigits</groupId>

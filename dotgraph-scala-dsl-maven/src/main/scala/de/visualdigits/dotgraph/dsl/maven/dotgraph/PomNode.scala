@@ -11,9 +11,10 @@ import de.visualdigits.dotgraph.dsl.maven.model.pom.{Build, Pom, Profile, Resour
 import scala.collection.mutable
 
 class PomNode(
-               graph: PomGraph,
+               graph: DotGraph,
                var name: String,
-               val pom: Pom, m2RepoDirectory: String,
+               val pom: Pom,
+               m2RepoDirectory: String,
                val isExternal: Boolean = false,
                var bgColor: DotColor = DotColor.DEFAULT,
                analyzeDependencies: Boolean = false
@@ -346,7 +347,7 @@ class PomNode(
 
 object PomNode {
   def apply(
-             graph: PomGraph,
+             graph: DotGraph,
              name: String,
              pom: Pom,
              m2RepoDirectory: String,

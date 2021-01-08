@@ -494,7 +494,13 @@ class DotGraph(var id: String, val isStrict: Boolean = false, val graphType: Gra
     val _node = nodes.get(id)
     if (_node.isDefined) {
       val node = _node.get
-      if (doRemoveEdges) node.edges.clear()
+      if (doRemoveEdges) {
+        node.edges.foreach(edge => {
+          edge.from.removeEdges(node)
+          edge.to.removeReferences(node)
+        })
+        node.edges.clear()
+      }
       roots.remove(node)
       leafs.remove(node)
       nodes.remove(node.id)

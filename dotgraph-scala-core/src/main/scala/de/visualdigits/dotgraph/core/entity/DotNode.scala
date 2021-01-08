@@ -10,8 +10,10 @@ import scala.collection.mutable
  *
  * @param graph The containing graph.
  * @param id The id of this node.
+ * @param category
+ * @param payload
  */
-class DotNode(var graph: DotGraph, var id: String = "", var category: Option[String] = Option.empty) extends AbstractDotEntity[DotNode, DotNodeAttributes] with Ordered[DotNode] {
+class DotNode(var graph: DotGraph, var id: String = "", var category: Option[String] = Option.empty, val payload: Option[Any] = None) extends AbstractDotEntity[DotNode, DotNodeAttributes] with Ordered[DotNode] {
 
   override var attributes = new DotNodeAttributes(this)
 
@@ -284,5 +286,5 @@ class DotNode(var graph: DotGraph, var id: String = "", var category: Option[Str
 }
 
 object DotNode {
-  def apply(graph: DotGraph, id: String = "", category: Option[String] = Option.empty) = new DotNode(graph, id, category)
+  def apply(graph: DotGraph, id: String = "", category: Option[String] = Option.empty, payload: Option[Any] = None) = new DotNode(graph, id, category, payload)
 }
