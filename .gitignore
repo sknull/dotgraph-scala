@@ -2,3 +2,4 @@
 .idea/
 dotgraph-scala-core/.settings/
 .settings/
+lsp/
