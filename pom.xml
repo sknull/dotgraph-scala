@@ -9,7 +9,7 @@
   <version>1.0.1-SNAPSHOT</version>
   <description>Dot API Scala Flavour</description>
 
-  <properties><!---->
+  <properties>
     <scala-version>2.13</scala-version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
