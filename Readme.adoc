@@ -51,7 +51,10 @@ For supported output formats please have a look into the https://graphviz.gitlab
       .addEdgeById("c", "a")
       .output(dotExecutable, targetDirectory, "simple", "pdf", "300")
 
-image::docs/jpg/simple.jpg[]
+[plantuml]
+----
+include::docs/dot/simple.dot[]
+----
 
 ==== Cycle Detection
 One of the main features of this API is the capability to detect cycles as in this example:
@@ -73,7 +76,10 @@ One of the main features of this API is the capability to detect cycles as in th
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "cycle")
 
-image::docs/jpg/cycle.jpg[]
+[plantuml]
+----
+include::docs/dot/cycle.dot[]
+----
 
 ==== Calculating Routes and Transitive Edges
 Another important feature is the calculation of routes within the graph along with transitive edges.
@@ -124,7 +130,10 @@ the default ellipse:
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "routes")
 
-image::docs/jpg/routes.jpg[]
+[plantuml]
+----
+include::docs/dot/routes.dot[]
+----
 
 ==== Sub Graphs
 Graphs may also be nested which is demonstrated by the following code snippet.
@@ -202,7 +211,10 @@ this is a restriction of the dot language.
       .determineGraphRoutes
       .output(dotExecutable, targetDirectory, "subgraph")
 
-image::docs/jpg/subgraph.jpg[]
+[plantuml]
+----
+include::docs/dot/subgraph.dot[]
+----
 
 ==== Nested Graphs
 It is also possible to nest graphs. Here the same rules for sub graphs apply regarding their naming as mentioned in the
@@ -242,7 +254,10 @@ previous section.
       .addGraph(cluster2)
       .output(dotExecutable, targetDirectory, "nested")
 
-image::docs/jpg/nested.jpg[]
+[plantuml]
+----
+include::docs/dot/nested.dot[]
+----
 
 === Maven DSL
 Currently the only DSL example is the Maven DSL which may be used to analyze complex

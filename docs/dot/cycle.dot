@@ -1,0 +1,21 @@
+digraph "graph" {
+  rankdir=BT;
+
+  "a" [color="#ff7700"];
+  "a" -> "e" [color="#ff7700",label=""];
+
+  "b" [color="#ff7700"];
+  "b" -> "a" [color="#ffe4cc",label=""];
+
+  "c" [];
+  "c" -> "d" [color="#000000",label=""];
+
+  "d" [];
+  "d" -> "a" [color="#cccccc",label=""];
+
+  "e" [color="#ff7700"];
+  "e" -> "b" [color="#ffe4cc",label=""];
+
+
+  "LEGEND" [fillcolor="#ffffff",fontname="Verdana,Arial,Sans-Serif",label=<<table border="2" cellborder="1" cellspacing="0" id="LEGEND"><tr><td align="left">LEGEND</td></tr><tr><td align="left"><b>graph</b></td></tr><tr><td align="left">2021-07-27 09:04</td></tr></table>>,shape=plaintext,style=filled];
+}

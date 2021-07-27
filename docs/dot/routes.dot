@@ -1,0 +1,51 @@
+digraph "test-graph" {
+  rankdir=BT;
+
+  node [fillcolor="yellow",shape=rect,style=filled];
+
+  "a" [];
+
+  "b" [];
+  "b" -> "a" [color="#000000",label=""];
+
+  "c" [fillcolor="red"];
+  "c" -> "a" [color="#000000",label=""];
+
+  "d" [];
+  "d" -> "c" [color="#000000",label=""];
+  "d" -> "y" [color="#000000",label=""];
+
+  "e" [];
+  "e" -> "a" [color="#b3b3b3",label=""];
+  "e" -> "d" [color="#000000",label=""];
+  "e" -> "h" [color="#000000",label=""];
+  "e" -> "c" [color="#b3b3b3",label=""];
+
+  "f" [];
+  "f" -> "x" [color="#000000",label=""];
+
+  "g" [];
+  "g" -> "x" [color="#000000",label=""];
+
+  "h" [];
+  "h" -> "g" [color="#000000",label=""];
+  "h" -> "x" [color="#b3b3b3",label=""];
+  "h" -> "f" [color="#000000",label=""];
+
+  "r" [];
+
+  "x" [];
+  "x" -> "a" [color="#000000",label=""];
+  "x" -> "r" [color="#000000",label=""];
+
+  "y" [];
+  "y" -> "b" [color="#000000",label=""];
+
+  "z" [];
+  "z" -> "e" [color="#000000",label=""];
+  "z" -> "g" [color="#b3b3b3",label=""];
+  "z" -> "y" [color="#b3b3b3",label=""];
+
+
+  "LEGEND" [fillcolor="#ffffff",fontname="Verdana,Arial,Sans-Serif",label=<<table border="2" cellborder="1" cellspacing="0" id="LEGEND"><tr><td align="left">LEGEND</td></tr><tr><td align="left"><b>test-graph</b></td></tr><tr><td align="left">2021-07-27 11:56</td></tr></table>>,shape=plaintext,style=filled];
+}

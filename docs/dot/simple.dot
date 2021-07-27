@@ -1,0 +1,16 @@
+digraph "simple" {
+  rankdir=BT;
+
+  "a" [];
+
+  "b" [];
+  "b" -> "a" [color="#000000",label=""];
+
+  "c" [];
+  "c" -> "a" [color="#000000",label=""];
+
+  "orphan" [];
+
+
+  "LEGEND" [fillcolor="#ffffff",fontname="Verdana,Arial,Sans-Serif",label=<<table border="2" cellborder="1" cellspacing="0" id="LEGEND"><tr><td align="left">LEGEND</td></tr><tr><td align="left"><b>simple</b></td></tr><tr><td align="left">2021-07-27 11:56</td></tr></table>>,shape=plaintext,style=filled];
+}

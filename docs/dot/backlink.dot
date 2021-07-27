@@ -1,0 +1,19 @@
+digraph "backlink-graph" {
+  rankdir=BT;
+
+  "a" [color="#ff0000"];
+  "a" -> "a" [color="#ffb3b3",label=""];
+  "a" -> "b" [color="#ff0000",label=""];
+  "a" -> "d" [color="#b3b3b3",label=""];
+
+  "b" [color="#ff0000"];
+  "b" -> "a" [color="#ff0000",label=""];
+
+  "c" [];
+  "c" -> "a" [color="#000000",label=""];
+
+  "d" [];
+
+
+  "LEGEND" [fillcolor="#ffffff",fontname="Verdana,Arial,Sans-Serif",label=<<table border="2" cellborder="1" cellspacing="0" id="LEGEND"><tr><td align="left">LEGEND</td></tr><tr><td align="left"><b>backlink-graph</b></td></tr><tr><td align="left">2021-07-27 11:56</td></tr></table>>,shape=plaintext,style=filled];
+}
