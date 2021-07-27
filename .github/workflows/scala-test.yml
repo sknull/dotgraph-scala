@@ -14,5 +14,5 @@ jobs:
       uses: stCarolas/setup-maven@v4
       with:
         maven-version: 3.5.4
-    - name: Run tests
-      run: mvn clean test
+    - name: Compile
+      run: mvn clean compile
