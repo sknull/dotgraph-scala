@@ -15,4 +15,4 @@ jobs:
       with:
         maven-version: 3.5.4
     - name: Compile
-      run: mvn clean compile test
+      run: mvn clean compile test deploy
