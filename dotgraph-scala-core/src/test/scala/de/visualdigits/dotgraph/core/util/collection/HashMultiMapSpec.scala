@@ -1,10 +1,14 @@
 package de.visualdigits.dotgraph.core.util.collection
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.junit.runner.RunWith
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.junit.JUnitRunner
 
 import scala.collection.mutable
 
-class HashMultiMapSpec extends FlatSpec with Matchers {
+@RunWith(classOf[JUnitRunner])
+class HashMultiMapSpec extends AnyFlatSpec with Matchers {
 
   "A MultiTreeSetTableSpec" should "behave as expected" in {
     val map = HashMultiMap[String, Int]()

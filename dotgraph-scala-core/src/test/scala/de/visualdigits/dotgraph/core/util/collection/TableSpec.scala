@@ -1,8 +1,12 @@
 package de.visualdigits.dotgraph.core.util.collection
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.junit.runner.RunWith
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.junit.JUnitRunner
 
-class TableSpec extends FlatSpec with Matchers {
+@RunWith(classOf[JUnitRunner])
+class TableSpec extends AnyFlatSpec with Matchers {
 
   "A Table" should "behave as expected" in {
     val table = Table[String, String, Int]()

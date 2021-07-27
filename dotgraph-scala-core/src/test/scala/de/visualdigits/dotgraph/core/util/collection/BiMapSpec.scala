@@ -1,8 +1,12 @@
 package de.visualdigits.dotgraph.core.util.collection
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.junit.runner.RunWith
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatestplus.junit.JUnitRunner
 
-class BiMapSpec extends FlatSpec with Matchers {
+@RunWith(classOf[JUnitRunner])
+class BiMapSpec extends AnyFlatSpec with Matchers {
 
   "A BiMap" should "behave as expected" in {
     val map = BiMap[String, Int]()

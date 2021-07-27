@@ -2,10 +2,10 @@ package de.visualdigits.dotgraph.dsl.maven
 
 import java.io.File
 import java.nio.file.Paths
-
 import de.visualdigits.dotgraph.dsl.maven.dotgraph.PomGraph
-import org.junit.Test
+import org.junit.{Ignore, Test}
 
+@Ignore
 class XmlTest {
 
   private val userHome: String = System.getProperty("user.home")

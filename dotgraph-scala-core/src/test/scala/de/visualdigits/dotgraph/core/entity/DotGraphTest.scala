@@ -2,20 +2,23 @@ package de.visualdigits.dotgraph.core.entity
 
 import java.io.File
 import java.nio.file.Paths
-
 import de.visualdigits.dotgraph.core.`type`._
 import org.junit.Assert._
-import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.{Ignore, Test}
+import org.scalatestplus.junit.JUnitRunner
 
 import scala.collection.mutable
 
+@Ignore
+@RunWith(classOf[JUnitRunner])
 class DotGraphTest {
 
   val dotExecutable = new File("/usr/local/bin/dot")
   val targetDirectory: File = Paths.get(System.getProperty("user.home"),"dotgraph", "core").toFile
 
-  @Test def testRemove(): Unit = {
-
+  @Test
+  def testRemove(): Unit = {
     val graph = DotGraph("graph")
       .setDetermineTransitiveEdges(true)
       .addNodeById("a")
@@ -29,7 +32,8 @@ class DotGraphTest {
     println(graph)
   }
 
-  @Test def testCRUD(): Unit = {
+  @Test
+  def testCRUD(): Unit = {
     val subgraph = DotGraph("cluster", graphType = GraphType.subgraph)
       .setCreateLegend(CreateLegend.NONE)
       .setDetermineTransitiveEdges(true)
@@ -139,7 +143,8 @@ class DotGraphTest {
     assertEquals("Created node 'foo' twice", node, node2)
   }
 
-  @Test def testSimple(): Unit = {
+  @Test
+  def testSimple(): Unit = {
     DotGraph("simple")
           .setDetermineTransitiveEdges(true)
           .addNodeById("a")
@@ -214,7 +219,8 @@ class DotGraphTest {
     assertTrue("ListNode 'e' not considered to be part of cycle", e.get.partOfCycle)
   }
 
-  @Test def testCluster1(): Unit = {
+  @Test
+  def testCluster1(): Unit = {
     val graph = DotGraph("cluster1")
     graph.setDetermineTransitiveEdges(true)
           .attributes.setStyle(ClusterStyle.dotted)
@@ -237,7 +243,8 @@ class DotGraphTest {
           .output(targetDirectory, "cluster1", dotExecutable = dotExecutable)
   }
 
-  @Test def testCluster2(): Unit = {
+  @Test
+def testCluster2(): Unit = {
     val graph = DotGraph("cluster2", false, GraphType.digraph)
     graph.setDetermineTransitiveEdges(true)
           .addNode(DotNode(graph, "a2")
@@ -256,7 +263,8 @@ class DotGraphTest {
           .output(targetDirectory, "cluster2", dotExecutable = dotExecutable)
   }
 
-  @Test def testNesting(): Unit = {
+  @Test
+  def testNesting(): Unit = {
     val cluster1 = DotGraph("cluster1", graphType = GraphType.subgraph)
       .setCreateLegend(CreateLegend.NONE)
       .setDetermineTransitiveEdges(true)
@@ -292,7 +300,8 @@ class DotGraphTest {
           .output(targetDirectory, "nested", dotExecutable = dotExecutable)
   }
 
-  @Test def testSubGraphSingle(): Unit = {
+  @Test
+  def testSubGraphSingle(): Unit = {
     val graph = DotGraph("subgraph single", false, GraphType.digraph)
     graph.setDetermineTransitiveEdges(true)
           .addNode(DotNode(graph, "a1")
@@ -331,7 +340,8 @@ class DotGraphTest {
           .output(targetDirectory, "single-graph", dotExecutable = dotExecutable)
   }
 
-  @Test def testSubGraph(): Unit = {
+  @Test
+  def testSubGraph(): Unit = {
     val cluster1 = DotGraph("cluster1", graphType = GraphType.subgraph)
     cluster1.setCreateLegend(CreateLegend.NONE)
       .setDetermineTransitiveEdges(true)
@@ -404,7 +414,8 @@ class DotGraphTest {
           .output(targetDirectory, "subgraph", dotExecutable = dotExecutable)
   }
 
-  @Test def testMultipleGroups(): Unit = {
+  @Test
+  def testMultipleGroups(): Unit = {
     val graph = DotGraph("test-graph", false, GraphType.digraph)
     graph.setCreateLegend(CreateLegend.FULL)
           .setDetermineTransitiveEdges(true)
@@ -443,7 +454,8 @@ class DotGraphTest {
           .output(targetDirectory, "multiple-groups", dotExecutable = dotExecutable)
   }
 
-  @Test def testBackLink(): Unit = {
+  @Test
+  def testBackLink(): Unit = {
     DotGraph("backlink-graph", false, GraphType.digraph)
           .setDetermineTransitiveEdges(true)
           .addNodeById("a")
@@ -459,7 +471,8 @@ class DotGraphTest {
           .output(targetDirectory, "backlink", dotExecutable = dotExecutable)
   }
 
-  @Test //    @Ignore
+  @Test
+  //    @Ignore
   def testWarehouse(): Unit = {
     DotGraph("warehouse-graph", false, GraphType.digraph)
           .setDetermineTransitiveEdges(true)
@@ -522,7 +535,8 @@ class DotGraphTest {
           .output(targetDirectory, "warehouse", dotExecutable = dotExecutable)
   }
 
-  @Test def testRoutes(): Unit = {
+  @Test
+  def testRoutes(): Unit = {
     val graph = DotGraph("test-graph", false, GraphType.digraph)
     graph.setDetermineTransitiveEdges(true)
           .addNode(DotNode(graph)

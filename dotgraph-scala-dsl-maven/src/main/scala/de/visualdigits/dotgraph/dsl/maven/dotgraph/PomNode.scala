@@ -192,9 +192,9 @@ class PomNode(
   }
 
   def showAttributes(): Unit = {
-    val title = "<b>%s</b>".format(pom.artifact.resolveProperties(pom.consolidatedProperties.toMap).toString)
     table.clearRows()
-    table.addRow(title, DotColor.DEFAULT, bgColor,
+    val artifact = pom.artifact.resolveProperties(pom.consolidatedProperties.toMap)
+    table.addRow(s"<b>${artifact.artifactId}</b>", DotColor.DEFAULT, bgColor,
       2, align = Align.center)
 //    showOrganization()
 //    showScm()

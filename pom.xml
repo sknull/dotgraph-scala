@@ -36,7 +36,7 @@
       </dependency>
       <dependency>
         <groupId>com.twitter</groupId>
-        <artifactId>util-eval_2.12</artifactId>
+        <artifactId>util-eval_2.12</artifactId><!-- NO SCALA 2.13 VERSION -->
         <version>6.43.0</version>
       </dependency>
       <dependency>
@@ -47,14 +47,20 @@
       <dependency>
         <groupId>com.beachape</groupId>
         <artifactId>enumeratum_${scala-version}</artifactId>
-        <version>1.5.13</version>
+        <version>1.7.0</version>
       </dependency>
 
       <!-- testing -->
       <dependency>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest_${scala-version}</artifactId>
-        <version>3.0.8</version>
+        <version>3.2.9</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.scalatestplus</groupId>
+        <artifactId>junit-4-13_${scala-version}</artifactId>
+        <version>3.2.9.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -87,7 +93,7 @@
         <plugin>
           <groupId>net.alchim31.maven</groupId>
           <artifactId>scala-maven-plugin</artifactId>
-          <version>4.3.0</version>
+          <version>4.5.3</version>
           <executions>
             <execution>
               <goals>
