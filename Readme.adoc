@@ -1,10 +1,9 @@
 = Dotgraph Scala
 :doctype: book
-:description: Projekt Dokumentation für den Mediaboss
-:keywords: Inbound, APA, EQS, PRN, Media-Boss
+:description: Documentation for dotgraph-scala
+:keywords: Scala, Dotgraph, Graphviz
 :icons: font
 :toc:
-:toc-title: Inhalt
 :toclevels: 10
 :graphvizdot: /usr/local/bin/dot
 
